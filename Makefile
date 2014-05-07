@@ -1,25 +1,8 @@
-REBAR = ./rebar
+PROJECT = eper
 
-.PHONY: all clean eunit xref release release_minor release_major
+ERLC_OPTS = +debug_info +warn_export_all +warn_export_vars +warn_shadow_vars +warn_obsolete_guard
 
-all:
-	@$(REBAR) compile escriptize
+PLT_APPS = hipe sasl mnesia crypto compiler syntax_tools
+DIALYZER_OPTS = -Werror_handling -Wrace_conditions -Wunmatched_returns | fgrep -v -f ./dialyzer.ignore-warning
 
-clean:
-	@find . -name "*~" -exec rm {} \;
-	@$(REBAR) clean
-
-eunit:
-	@$(REBAR) eunit
-
-xref: all
-	@$(REBAR) xref
-
-release_major: xref eunit
-	./bin/release.sh major
-
-release_minor: xref eunit
-	./bin/release.sh minor
-
-release: xref eunit
-	./bin/release.sh patch
+include erlang.mk
